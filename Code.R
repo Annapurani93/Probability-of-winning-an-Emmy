@@ -22,28 +22,24 @@ nominees%>%select("title","distributor","type","category","year")%>%
   arrange(-n)
 
 #netflix nomations and winners
-nominees%>%filter(distributor=="Netflix")%>%filter(type=="Nominee")%>%
+nominees%>%filter(distributor=="Netflix")%>%
+  distinct(title,category,.keep_all = TRUE)%>%
   select(distributor,category,title,type,year)%>%
   group_by(year,distributor)%>%
-  count()->Nnom
-Nnom
-nominees%>%filter(distributor=="Netflix")%>%filter(type=="Winner")%>%
-  select(distributor,category,title,type,year)%>%
-  group_by(year,distributor)%>%
-  count()->Nwin
+  summarise(Nominee=sum(type=="Nominee"), winner=sum(type=="Winner"))->net
 
-cbind(Nnom,Nwin)->n
-n
-n[c(1,2,3,6)]->net
+net
 colnames(net)<-c("Year","Distributor","Lost","Won")
 net%>%mutate(nominations=(Lost+Won))%>%mutate(ratio=(Won/nominations)*100)->net
 net%>%select(Year,Distributor,nominations,Won)->net1
 net1
 
+glimpse(nominees)
 
 #HBO nomations and winners
 nominees%>%filter(distributor=="HBO")%>%
   select(distributor,category,title,type,year)%>%
+  distinct(title,category,.keep_all = TRUE)%>%
   group_by(year,distributor)%>%
   summarise(Nominee=sum(type=="Nominee"), winner=sum(type=="Winner"))->hnet
 
@@ -57,6 +53,7 @@ hnet1
 #NBC nomations and winners
 nominees%>%filter(distributor=="NBC")%>%
   select(distributor,category,title,type,year)%>%
+  distinct(title,category,.keep_all = TRUE)%>%
   group_by(year,distributor)%>%
   summarise(Nominee=sum(type=="Nominee"), winner=sum(type=="Winner"))->NBnet
 
@@ -69,6 +66,7 @@ NBnet1
 #CBS nomations and winners
 nominees%>%filter(distributor=="CBS")%>%
   select(distributor,category,title,type,year)%>%
+  distinct(title,category,.keep_all = TRUE)%>%
   group_by(year,distributor)%>%
   summarise(Nominee=sum(type=="Nominee"), winner=sum(type=="Winner"))->CBnet
 
@@ -82,6 +80,7 @@ CBnet1
 #ABC nomations and winners
 nominees%>%filter(distributor=="ABC")%>%
   select(distributor,category,title,type,year)%>%
+  distinct(title,category,.keep_all = TRUE)%>%
   group_by(year,distributor)%>%
   summarise(Nominee=sum(type=="Nominee"), winner=sum(type=="Winner"))->ABCnet
 
